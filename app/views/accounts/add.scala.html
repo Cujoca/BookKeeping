@@ -1,0 +1,29 @@
+@()
+
+@main("Add Account - BookKeeper") {
+  <h2>Add Account</h2>
+  <form class="form" method="post" action="#">
+    <div class="form-row">
+      <label>Name</label>
+      <input type="text" placeholder="e.g. Savings" />
+    </div>
+    <div class="form-row">
+      <label>Type</label>
+      <select>
+        <option>Asset</option>
+        <option>Liability</option>
+        <option>Equity</option>
+        <option>Income</option>
+        <option>Expense</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Opening Balance</label>
+      <input type="number" step="0.01" placeholder="0.00" />
+    </div>
+    <div class="form-actions">
+      <a class="btn secondary" href="@routes.AccountsController.list()">Cancel</a>
+      <button class="btn" type="submit">Save</button>
+    </div>
+  </form>
+}

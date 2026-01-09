@@ -1,0 +1,33 @@
+@()
+
+@main("Reports - BookKeeper") {
+  <h2>Reports</h2>
+  <form class="form" method="get" action="#">
+    <div class="form-row two-col">
+      <div>
+        <label>From</label>
+        <input type="date" />
+      </div>
+      <div>
+        <label>To</label>
+        <input type="date" />
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Report Type</label>
+      <select>
+        <option>Profit & Loss</option>
+        <option>Balance Sheet</option>
+        <option>Cash Flow</option>
+        <option>Account Statement</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn" type="submit">Generate</button>
+    </div>
+  </form>
+
+  <div class="chart-placeholder">
+    <p>Chart Preview</p>
+  </div>
+}

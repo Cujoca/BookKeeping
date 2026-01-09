@@ -1,0 +1,33 @@
+@()
+
+@main("Add Transaction - BookKeeper") {
+  <h2>Add Transaction</h2>
+  <form class="form" method="post" action="#">
+    <div class="form-row">
+      <label>Date</label>
+      <input type="date" />
+    </div>
+    <div class="form-row two-col">
+      <div>
+        <label>From Account</label>
+        <input type="text" placeholder="e.g. Bank" />
+      </div>
+      <div>
+        <label>To Account/Category</label>
+        <input type="text" placeholder="e.g. Utilities" />
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Description</label>
+      <input type="text" placeholder="e.g. January Utilities" />
+    </div>
+    <div class="form-row">
+      <label>Amount</label>
+      <input type="number" step="0.01" placeholder="0.00" />
+    </div>
+    <div class="form-actions">
+      <a class="btn secondary" href="@routes.TransactionsController.list()">Cancel</a>
+      <button class="btn" type="submit">Save</button>
+    </div>
+  </form>
+}

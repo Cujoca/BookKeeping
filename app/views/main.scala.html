@@ -1,0 +1,44 @@
+@*
+ * This template is called from the `index` template. This template
+ * handles the rendering of the page header and body tags. It takes
+ * two arguments, a `String` for the title of the page and an `Html`
+ * object to insert into the body of the page.
+ *@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @* Here's where we render the page title `String`. *@
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="/assets/stylesheets/main.css">
+        <link rel="shortcut icon" type="image/png" href="/assets/images/favicon.png">
+        @* DataTables CSS *@
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+
+    </head>
+    <body>
+        <header class="app-header">
+            <div class="brand">BookKeeper</div>
+            <nav class="top-nav">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/accounts">Accounts</a>
+                <a href="/transactions">Transactions</a>
+                <a href="/reports">Reports</a>
+                <
+                <a href="/settings">Settings</a>
+            </nav>
+        </header>
+        <main class="container">
+            @* And here's where we render the `Html` object containing the page content. *@
+            @content
+        </main>
+        <footer class="app-footer">
+            <span>BookKeeper App — Frontend scaffold</span>
+        </footer>
+      @* jQuery + DataTables JS *@
+      <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+      <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+      <script src="/assets/javascripts/main.js" type="text/javascript"></script>
+    </body>
+</html>

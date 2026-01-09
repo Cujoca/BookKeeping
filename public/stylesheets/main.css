@@ -1,0 +1,79 @@
+:root{
+  --bg:#0f172a; /* slate-900 */
+  --panel:#111827; /* gray-900 */
+  --muted:#9ca3af; /* gray-400 */
+  --text:#e5e7eb; /* gray-200 */
+  --accent:#22c55e; /* green-500 */
+  --accent-2:#06b6d4; /* cyan-500 */
+  --danger:#ef4444;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text); font:14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+}
+
+.app-header{display:flex; align-items:center; justify-content:space-between; padding:12px 20px; background:linear-gradient(90deg, #0b1022, #0f172a); border-bottom:1px solid #1f2937; position:sticky; top:0; z-index:10}
+.brand{font-weight:700; letter-spacing:.5px}
+.top-nav a{color:var(--muted); text-decoration:none; margin-left:16px; padding:6px 10px; border-radius:6px}
+.top-nav a:hover{color:var(--text); background:#1f2937}
+
+.container{max-width:1100px; margin:24px auto; padding:0 20px}
+
+.kpis{display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:24px}
+.kpi{background:var(--panel); padding:16px; border:1px solid #1f2937; border-radius:10px}
+.kpi-label{color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.6px}
+.kpi-value{font-size:22px; margin-top:6px}
+.positive{color:var(--accent)}
+.negative{color:var(--danger)}
+
+.section-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px}
+
+.table{width:100%; border-collapse:separate; border-spacing:0; background:var(--panel); border:1px solid #1f2937; border-radius:10px; overflow:hidden}
+.table th,.table td{padding:10px 12px; border-bottom:1px solid #1f2937}
+.table thead th{background:#0b1022; color:var(--muted); text-align:left; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px}
+.table tbody tr:hover{background:#0e142a}
+.right{text-align:right}
+
+.btn{display:inline-block; background:var(--accent); color:#062c15; font-weight:700; text-decoration:none; padding:8px 12px; border:none; border-radius:8px; cursor:pointer}
+.btn:hover{filter:brightness(1.05)}
+.btn.secondary{background:#374151; color:#e5e7eb}
+
+.form{background:var(--panel); padding:16px; border:1px solid #1f2937; border-radius:10px}
+.form-row{display:flex; flex-direction:column; margin-bottom:12px}
+.form-row.two-col{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+label{color:var(--muted); font-size:12px; margin-bottom:6px}
+input, select{width:100%; padding:10px 12px; background:#0b1022; color:var(--text); border:1px solid #1f2937; border-radius:8px}
+.form-actions{display:flex; gap:8px; justify-content:flex-end}
+
+.chart-placeholder{height:220px; border:1px dashed #334155; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#64748b; background:var(--panel)}
+
+.app-footer{max-width:1100px; margin:24px auto; padding:0 20px; color:#64748b}
+
+@media (max-width: 780px){
+  .kpis{grid-template-columns:1fr}
+  .top-nav a{margin-left:10px}
+}
+
+/* DataTables dark theme tweaks */
+.dataTables_wrapper .dataTables_filter label{color:var(--muted)}
+.dataTables_wrapper .dataTables_filter input{
+  margin-left:8px;
+  padding:8px 10px;
+  background:#0b1022;
+  color:var(--text);
+  border:1px solid #1f2937;
+  border-radius:8px;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button{
+  color:var(--muted) !important;
+  border:1px solid transparent;
+  background:transparent !important;
+  border-radius:6px;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+  color:#062c15 !important;
+  background:var(--accent) !important;
+}

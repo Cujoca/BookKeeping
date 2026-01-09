@@ -1,0 +1,32 @@
+@()
+
+@main("Dashboard - BookKeeper") {
+  <section class="kpis">
+    <div class="kpi">
+      <div class="kpi-label">Total Income</div>
+      <div class="kpi-value">$12,340.00</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Expenses</div>
+      <div class="kpi-value">$8,910.00</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Net</div>
+      <div class="kpi-value positive">$3,430.00</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Recent Transactions</h2>
+    <table id="recent-transactions" class="table display" style="width:100%">
+      <thead>
+        <tr><th>Date</th><th>Description</th><th>Account</th><th>Category</th><th class="right">Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2026-01-08</td><td>Coffee Shop</td><td>Cash</td><td>Food & Drinks</td><td class="right">- $4.50</td></tr>
+        <tr><td>2026-01-07</td><td>Client Payment</td><td>Bank</td><td>Income</td><td class="right positive">$1,200.00</td></tr>
+        <tr><td>2026-01-05</td><td>Utilities</td><td>Bank</td><td>Bills</td><td class="right">- $95.00</td></tr>
+      </tbody>
+    </table>
+  </section>
+}

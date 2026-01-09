@@ -1,0 +1,18 @@
+@()
+
+@main("Accounts - BookKeeper") {
+  <section class="section-header">
+    <h2>Accounts</h2>
+    <a class="btn" href="@routes.AccountsController.add()">Add Account</a>
+  </section>
+  <table class="table">
+    <thead>
+      <tr><th>Name</th><th>Type</th><th class="right">Balance</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Bank</td><td>Asset</td><td class="right">$5,430.22</td></tr>
+      <tr><td>Cash</td><td>Asset</td><td class="right">$120.00</td></tr>
+      <tr><td>Credit Card</td><td>Liability</td><td class="right negative">- $230.45</td></tr>
+    </tbody>
+  </table>
+}

@@ -1,0 +1,45 @@
+@()
+
+@main("Settings - BookKeeper") {
+  <h2>Settings</h2>
+  <form class="form" method="post" action="#">
+    <fieldset>
+      <legend>Organization</legend>
+      <div class="form-row">
+        <label>Name</label>
+        <input type="text" placeholder="Your Company LLC" />
+      </div>
+      <div class="form-row two-col">
+        <div>
+          <label>Base Currency</label>
+          <select>
+            <option>CAD</option>
+            <option>USD</option>
+            <option>EUR</option>
+            <option>GBP</option>
+          </select>
+        </div>
+        <div>
+          <label>Fiscal Year Start</label>
+          <input type="date" />
+        </div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Preferences</legend>
+      <div class="form-row">
+        <label>
+          <input type="checkbox" /> Show cents
+        </label>
+      </div>
+      <div class="form-row">
+        <label>
+          <input type="checkbox" /> Dark mode
+        </label>
+      </div>
+    </fieldset>
+    <div class="form-actions">
+      <button class="btn" type="submit">Save Settings</button>
+    </div>
+  </form>
+}
