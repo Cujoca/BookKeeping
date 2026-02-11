@@ -5,10 +5,20 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
     <h1>Upload File</h1>
-    
-    @helper.form(action = routes.FileUploadController.uploadFile(), Symbol("enctype") -> "multipart/form-data") {
+
+    <h2>General Ledger</h2>
+    @helper.form(action = routes.UploadController.upload(), Symbol("enctype") -> "multipart/form-data") {
         <input type="file" multiple name="name" size="30">
         @helper.CSRF.formField
         <input type="submit" id="upload" value="upload file">
     }
+
+    <h2>Invoices</h2>
+    @helper.form(action = routes.UploadController.uploadInvoice(), Symbol("enctype") -> "multipart/form-data") {
+        <input type="file" multiple name="name" size="30">
+        @helper.CSRF.formField
+        <input type="submit" id="upload" value="upload file">
+    }
+
+    <h2>Bank (TD) NOT IMPLEMENTED YET</h2>
 }

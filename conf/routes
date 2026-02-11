@@ -12,19 +12,25 @@ GET     /dashboard                  controllers.DashboardController.dashboard()
 # Accounts
 GET     /accounts                   controllers.AccountsController.list()
 GET     /accounts/add               controllers.AccountsController.add()
+GET     /accounts/view/:account     controllers.AccountsController.view(account: String)
+POST    /accounts/changeType        controllers.AccountsController.changeType()
 
 # Transactions
 GET     /transactions               controllers.TransactionsController.list()
 GET     /transactions/add           controllers.TransactionsController.add()
-
+GET     /transactions/view/:txnID   controllers.TransactionsController.view(txnID: Int)
+POST    /transactions/match         controllers.TransactionsController.getMatches(id: Int)
 #Files
 GET     /file                       controllers.UploadController.goToUpload()
+POST    /file/uploadStatus/Ledger   controllers.UploadController.upload()
+POST    /file/uploadStatus/Invoice  controllers.UploadController.uploadInvoice()
 
 # Reports
 GET     /reports                    controllers.ReportsController.index()
 
 # Settings
 GET     /settings                   controllers.SettingsController.index()
+POST    /settings/clearDB           controllers.SettingsController.clearDB()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

@@ -7,3 +7,6 @@ target
 /.project
 /.settings
 /RUNNING_PID
+/app/model/test/example.csv
+/app/model/test/
+/app.properties

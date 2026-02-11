@@ -1,10 +1,10 @@
-@()
+@(report: Map[String, Double])
 
 @main("Dashboard - BookKeeper") {
   <section class="kpis">
     <div class="kpi">
       <div class="kpi-label">Total Income</div>
-      <div class="kpi-value">$12,340.00</div>
+      <div class="kpi-value">$@{report.foldLeft(0: BigDecimal)((a, c) => a+c._2)}</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Total Expenses</div>
@@ -17,15 +17,21 @@
   </section>
 
   <section>
-    <h2>Recent Transactions</h2>
+    <h2>Accounts</h2>
     <table id="recent-transactions" class="table display" style="width:100%">
       <thead>
-        <tr><th>Date</th><th>Description</th><th>Account</th><th>Category</th><th class="right">Amount</th></tr>
+        <tr>
+            <th>Account</th>
+            <th class="right">Amount</th>
+        </tr>
       </thead>
       <tbody>
-        <tr><td>2026-01-08</td><td>Coffee Shop</td><td>Cash</td><td>Food & Drinks</td><td class="right">- $4.50</td></tr>
-        <tr><td>2026-01-07</td><td>Client Payment</td><td>Bank</td><td>Income</td><td class="right positive">$1,200.00</td></tr>
-        <tr><td>2026-01-05</td><td>Utilities</td><td>Bank</td><td>Bills</td><td class="right">- $95.00</td></tr>
+          @report.map { acc =>
+            <tr>
+              <td>@acc._1</td>
+              <td class="right">@acc._2</td>
+            </tr>
+          }
       </tbody>
     </table>
   </section>

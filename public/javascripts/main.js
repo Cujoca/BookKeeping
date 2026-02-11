@@ -14,11 +14,11 @@
       searching: true,
       info: false,
       lengthChange: false,
-      pageLength: 5,
+      pageLength: 50,
       order: [[0, 'desc']],
       autoWidth: false,
       columnDefs: [
-        { targets: 4, className: 'right' }
+        { targets: 1, className: 'right' }
       ],
       language: {
         search: 'Filter:',

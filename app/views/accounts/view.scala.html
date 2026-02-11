@@ -1,0 +1,80 @@
+@import model.domain.objects.{Transaction, Account}
+@import model.domain.types.AccountType
+@import helper._
+@(txns: Set[Transaction], account: Account, accountForm: Form[AccountFormData])(implicit request: MessagesRequestHeader)
+
+@main("View Account") {
+
+    <h1>@account.getName</h1>
+
+    <h2>Type of account: @AccountType.displayName(account.getType)</h2>
+    <div style="margin-bottom: 50px;">
+        <h3>Change type?</h3>
+
+        @helper.form(action = routes.AccountsController.changeType(), Symbol("method") -> "POST") {
+            @helper.CSRF.formField
+            <input type="hidden" name="ID" value="@account.getID">
+
+        <label for="types">Choose type:</label>
+        <select name="accType" id="accType" style="width: 200px;">
+            @for(t <- AccountType.all) {
+                <option value="@AccountType.displayName(t)"
+                    @if(AccountType.displayName(t).equals(AccountType.displayName(account.getType))) {
+                        selected="selected"}>
+                    @AccountType.displayName(t)
+                </option>
+            }
+        </select>
+        <button id="changeType" class="btn" type="submit">Save as this type</button>
+        }
+    </div>
+    <h2>Transactions</h2>
+    <table id="transactionsTable" class="table display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Type</th>
+                <th>ID</th>
+                <th class="right">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+        @txns.map { t =>
+            <tr>
+                <td>@t.getDate</td>
+                <td>@t.getName</td>
+                <td>@t.getDesc</td>
+                <td>@t.getFromAcc</td>
+                <td>@t.getToAcc</td>
+                <td>@t.getTxnType</td>
+                <td>@t.getID</td>
+                <td>$ @t.getAmount</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <script type="text/javascript">
+            $(document).ready(function() {
+                $('#transactionsTable').DataTable({
+                    order: [[0, 'asc']],
+                    pageLength: 25,
+                    lengthMenu: [10, 25, 50, 100],
+                    columnDefs: [
+                        { targets: 7, className: 'right' }
+                    ]
+                });
+            });
+    </script>
+
+
+
+
+
+
+
+
+}

@@ -1,0 +1,27 @@
+@import model.domain.objects.Transaction
+
+@(isUploaded: Boolean, files: Array[(String, Set[Transaction])])
+
+@main("File Upload Status") {
+    @if(isUploaded) {
+        <h1>File Uploaded Successfully</h1>
+    } else {
+        <h1>File Upload Failed</h1>
+    }
+
+    <table class="table">
+        <thead>
+            <tr><th>File Name</th><th>Transactions</th></tr>
+        </thead>
+        <tbody>
+        @for(file <- files) {
+            <tr><td>@file._1</td><td>@file._2.size</td></tr>
+        }
+        </tbody>
+    </table>
+
+
+
+
+}
+

@@ -1,4 +1,4 @@
-@()
+@(csrfToken: String)
 
 @main("Settings - BookKeeper") {
   <h2>Settings</h2>
@@ -38,8 +38,141 @@
         </label>
       </div>
     </fieldset>
+    <fieldSet>
+        <legend>Database Management</legend>
+        <div class="form-row">
+            <label>
+                <button id="clearDbBtn" class="btn" type="button" style="background-color: red" data-csrf="@csrfToken">!! CLEAR DATABASE !!</button>
+            </label>
+        </div>
+    </fieldSet>
     <div class="form-actions">
       <button class="btn" type="submit">Save Settings</button>
     </div>
   </form>
+  <!-- Inline modal styles kept local to this page to satisfy requirement with minimal changes -->
+  <style>
+    .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:1000}
+    .modal-overlay.active{display:flex}
+    .modal{background:#111827; color:#e5e7eb; border:1px solid #1f2937; border-radius:12px; width:min(520px, 92vw); box-shadow:0 10px 30px rgba(0,0,0,.4)}
+    .modal-header{padding:16px 18px; border-bottom:1px solid #1f2937; text-align:center}
+    .modal-title{margin:0; font-size:18px}
+    .modal-body{padding:18px; text-align:center}
+    .modal-danger{color:#ef4444; font-weight:700}
+    .modal-actions{display:flex; justify-content:center; gap:12px; padding:0 18px 18px}
+    .btn-danger{background:#ef4444}
+  </style>
+
+  <!-- Modal markup -->
+  <div id="confirmClearModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal" role="document">
+      <div class="modal-header">
+        <h3 id="modalTitle" class="modal-title">Confirm Database Clear</h3>
+      </div>
+      <div class="modal-body">
+        <p class="modal-danger">This action is dangerous and cannot be undone. Are you sure?</p>
+      </div>
+      <div class="modal-actions">
+        <button id="confirmYes" type="button" class="btn btn-danger">Yes, clear it</button>
+        <button id="confirmNo" type="button" class="btn secondary">No, go back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="resultModalTitle" aria-hidden="true">
+    <div class="modal" role="document">
+      <div class="modal-header">
+        <h3 id="resultModalTitle" class="modal-title">Operation Result</h3>
+      </div>
+      <div class="modal-body">
+        <p id="resultModalMessage" class="modal-danger">Processing...</p>
+      </div>
+      <div class="modal-actions">
+        <button id="resultClose" type="button" class="btn secondary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const openBtn = document.getElementById('clearDbBtn');
+      const modal = document.getElementById('confirmClearModal');
+      const resModal = document.getElementById('resultModal');
+      const btnNo = modal ? modal.querySelector('#confirmNo') : null;       // scoped to confirm modal
+      const btnYes = modal ? modal.querySelector('#confirmYes') : null;     // scoped to confirm modal
+      const resBtnClose = resModal ? resModal.querySelector('#resultClose') : null;
+
+      function openModal(){
+        modal.classList.add('active');
+        modal.removeAttribute('aria-hidden');
+      }
+      function closeModal(){
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden','true');
+      }
+
+      function showModal(msg) {
+          // update result modal content
+          const titleEl = resModal.querySelector('#resultModalTitle');
+          const msgEl = resModal.querySelector('#resultModalMessage');
+          if (titleEl) { titleEl.textContent = 'Operation Result'; }
+          if (msgEl) { msgEl.textContent = msg || ''; }
+          resModal.classList.add('active');
+          resModal.removeAttribute('aria-hidden');
+      }
+      function hideModal() {
+          resModal.classList.remove('active');
+          resModal.setAttribute('aria-hidden','true');
+      }
+
+      if(openBtn){ openBtn.addEventListener('click', openModal); }
+      if(btnNo){ btnNo.addEventListener('click', closeModal); }
+      if(modal){
+        modal.addEventListener('click', function(e){
+          if(e.target === modal){ closeModal(); }
+        });
+      }
+      if(resModal){
+        resModal.addEventListener('click', function(e){
+          if(e.target === resModal){ hideModal(); }
+        });
+      }
+      if(resBtnClose){ resBtnClose.addEventListener('click', hideModal); }
+      // On Yes: close confirm modal, call backend, and show result modal with response
+      if(btnYes){ btnYes.addEventListener('click', function(e){
+          e.preventDefault();
+          // close the confirm modal first
+          closeModal();
+
+          const csrf = (openBtn && openBtn.dataset) ? openBtn.dataset.csrf : '';
+          fetch('/settings/clearDB', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'Csrf-Token': csrf
+              },
+              body: JSON.stringify({})
+          })
+          .then(async (response) => {
+              let data = null;
+              try { data = await response.json(); } catch(_) {}
+              if(!response.ok){
+                  const msg = (data && (data.message || data.error)) || ('Request failed with status ' + response.status);
+                  throw new Error(msg);
+              }
+              const msg = (data && (data.message || 'Operation succeeded')) || 'Operation succeeded';
+              showModal(msg);
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              showModal('Error clearing database: ' + (error && error.message ? error.message : String(error)));
+          });
+      }); }
+      // Optional: allow ESC to close each modal
+      document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('active')){ closeModal(); } });
+      document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && resModal.classList.contains('active')){ hideModal(); } });
+    })();
+  </script>
 }

@@ -1,18 +1,36 @@
-@()
+@import model.domain.objects.Account
+@import model.domain.types.AccountType._
+@(accs: Set[Account])
 
 @main("Accounts - BookKeeper") {
   <section class="section-header">
     <h2>Accounts</h2>
     <a class="btn" href="@routes.AccountsController.add()">Add Account</a>
   </section>
-  <table class="table">
-    <thead>
-      <tr><th>Name</th><th>Type</th><th class="right">Balance</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Bank</td><td>Asset</td><td class="right">$5,430.22</td></tr>
-      <tr><td>Cash</td><td>Asset</td><td class="right">$120.00</td></tr>
-      <tr><td>Credit Card</td><td>Liability</td><td class="right negative">- $230.45</td></tr>
-    </tbody>
+
+  <table id="transactionsTable" class="table display" style="width:100%">
+      <thead>
+          <tr>
+              <th>Account Name</th>
+              <th>Account Type</th>
+          </tr>
+      </thead>
+      <tbody>
+          @accs.map { acc =>
+              <tr>
+                  <td><a href="/accounts/view/@{acc.getID}">@acc.getName</a></td>
+                  <td>@{displayName(acc.getType)}</td>
+              </tr>
+          }
+      </tbody>
   </table>
+  <script type="text/javascript">
+          $(document).ready(function() {
+              $('#transactionsTable').DataTable({
+                  order: [[0, 'asc']],
+                  pageLength: 25,
+                  lengthMenu: [10, 25, 50, 100]
+              });
+          });
+  </script>
 }

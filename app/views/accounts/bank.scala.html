@@ -1,0 +1,39 @@
+@import model.domain.objects.Transaction
+@(txns: Set[Transaction])
+
+@main("Bank Transactions") {
+    <section class="section-header">
+        <h2>Bank Transactions</h2>
+    </section>
+    <table id="transactionsTable" class="table display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>To</th>
+                <th>ID</th>
+                <th clss="right">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @txns.map { t =>
+                <tr>
+                    <td>@t.getDate</td>
+                    <td>@t.getName</td>
+                    <td>@t.getDesc</td>
+                    <td>@t.getToAcc</td>
+                    <td>@t.getID</td>
+                    <td>@t.getAmount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+
+
+
+
+
+}

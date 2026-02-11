@@ -1,0 +1,152 @@
+@import model.domain.objects.{Transaction, Account}
+@(txn: Transaction, txns: Set[Transaction])
+
+@main("View transaction details") {
+
+    <h1>Transaction number @txn.getDBID</h1>
+    <p>@txn.mkString</p>
+
+    @if(txns.isEmpty) {
+        <h2>There are no transactions matched to this one</h2>
+    } else {
+        <h2>Other transactions</h2>
+        <table class="table">
+            <thead>
+                <tr><th>Date</th><th>Amount</th></tr>
+            </thead>
+            <tbody>
+            @txns.map { t =>
+                <tr><td>@t.getDate</td><td>@t.getAmount</td></tr>
+            }
+            </tbody>
+        </table>
+    }
+        <button onclick="matchTxns()">Match transactions</button>
+
+    <style>
+            .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:1000}
+            .modal-overlay.active{display:flex}
+            .modal{background:#111827; color:#e5e7eb; border:1px solid #1f2937; border-radius:12px; width:min(92vw); box-shadow:0 10px 30px rgba(0,0,0,.4)}
+            .modal-header{padding:16px 18px; border-bottom:1px solid #1f2937; text-align:center}
+            .modal-title{margin:0; font-size:18px}
+            .modal-body{padding:18px; text-align:center}
+            .modal-danger{color:#ef4444; font-weight:700}
+            .modal-actions{display:flex; justify-content:center; gap:12px; padding:0 18px 18px}
+            .btn-danger{background:#ef4444}
+    </style>
+
+        <div id="matchModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="matchModalTitle" aria-hidden="true">
+            <div class="modal" role="document">
+                <div class="modal-header">
+                    <h3 id="matchModalTitle" class="modal-title">Automatically matched transactions:</h3>
+                </div>
+                <div class="modal-body"><p>Found these possible matches:</p></div>
+                <div>
+                    <table id="matchTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>From Account</th>
+                                <th>To Account</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>DBID</th>
+                                <th>Match?</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#matchTable').DataTable({
+                "order": [[ 0, "desc" ]]
+            })
+        })
+
+        const modal = document.getElementById('matchModal');
+        const table = document.getElementById('matchTable');
+
+        function showModal() {
+            console.log("showing modal");
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false')
+        }
+
+        function hideModal() {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function createTable(data) {
+
+            // grab json data
+            let arrTxns = data.transactions;
+            console.log("received "  + arrTxns.length + " transactions");
+            let col = [];
+            for (let key in arrTxns) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+
+            // data from json
+            for (var i = 0; i < arrTxns.length; i++) {
+                let row = document.createElement("tr");
+                let td1 = document.createElement("td");
+                let td2 = document.createElement("td");
+                let td3 = document.createElement("td");
+                let td4 = document.createElement("td");
+                let td5 = document.createElement("td");
+                let td6 = document.createElement("td");
+                let td7 = document.createElement("td");
+                let td8 = document.createElement("td");
+
+                let txn = arrTxns[i];
+                td1.innerHTML = txn.Date;
+                td2.innerHTML = txn.FromAcc;
+                td3.innerHTML = txn.ToAcc;
+                td4.innerHTML = txn.Name;
+                td5.innerHTML = txn.Description;
+                td6.innerHTML = txn.Amount;
+                td7.innerHTML = txn.DBID;
+                td8.innerHTML = document.createElement("BUTTON").innerHTML = "Match";
+
+                td8.onclick = function() {
+                    fetch('/transactions/match?id=@txn.getDBID&matchID=', {
+                        method: 'POST'
+                    })
+                }
+
+
+                row.appendChild(td1);
+                row.appendChild(td2);
+                row.appendChild(td3);
+                row.appendChild(td4);
+                row.appendChild(td5);
+                row.appendChild(td6);
+                row.appendChild(td7);
+                row.appendChild(td8);
+                table.appendChild(row);
+
+            }
+        }
+
+        function matchTxns() {
+            showModal(modal);
+            let matched = fetch('/transactions/match?id=@txn.getDBID', {
+                method: 'POST'
+            }).then(res => res.json())
+            .then(data => createTable(data));
+            console.log("successfully grabbed matched txns")
+        }
+
+    </script>
+
+
+
+}
