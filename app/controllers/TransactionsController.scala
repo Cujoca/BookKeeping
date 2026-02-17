@@ -43,4 +43,10 @@ class TransactionsController @Inject() (val controllerComponents: ControllerComp
 
     Ok(result)
   }
+
+  def foundMatch(id: Int, matchID: Int) = Action { implicit request: Request[AnyContent] =>
+    val result = Transaction.matchTxns(id, matchID)
+    if (result) Ok("successful")
+    else Ok("failed")
+  }
 }

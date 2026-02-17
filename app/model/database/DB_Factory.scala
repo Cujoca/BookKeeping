@@ -34,5 +34,4 @@ object DB_Factory {
       db.close()
     }
   }
-
 }

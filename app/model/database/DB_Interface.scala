@@ -86,6 +86,8 @@ trait DB_Interface {
   def getSpecificTxn (state: Statement, ID: Int): Option[ResultSet]
   
   def getPossibleMatches (state: Statement, amount: Double): Option[ResultSet]
+  
+  def matchTxns (state: Statement, txnID: Int, matchID: Int): Option[ResultSet]
 
   def addAccounts   (state: Statement, account: Set[String]): Option[ResultSet]
 

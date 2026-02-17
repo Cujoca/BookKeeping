@@ -104,7 +104,17 @@
                 let td5 = document.createElement("td");
                 let td6 = document.createElement("td");
                 let td7 = document.createElement("td");
+                let btn = document.createElement("button");
+                btn.type = "button";
+
+                let ah = document.createElement("a");
+                ah.href = "javascript:matchThis('@txn.getDBID&matchID=@txn.getDBID')";
+                @*ah.href = '/transactions/foundMatch?id=@txn.getDBID&matchID=@txn.getDBID';*@
+                ah.innerHTML = "Match"
+                btn.appendChild(ah)
+
                 let td8 = document.createElement("td");
+                td8.appendChild(btn)
 
                 let txn = arrTxns[i];
                 td1.innerHTML = txn.Date;
@@ -114,14 +124,6 @@
                 td5.innerHTML = txn.Description;
                 td6.innerHTML = txn.Amount;
                 td7.innerHTML = txn.DBID;
-                td8.innerHTML = document.createElement("BUTTON").innerHTML = "Match";
-
-                td8.onclick = function() {
-                    fetch('/transactions/match?id=@txn.getDBID&matchID=', {
-                        method: 'POST'
-                    })
-                }
-
 
                 row.appendChild(td1);
                 row.appendChild(td2);
@@ -145,6 +147,9 @@
             console.log("successfully grabbed matched txns")
         }
 
+        function matchThis(x) {
+console.log("a");
+        }
     </script>
 
 

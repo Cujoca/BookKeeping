@@ -290,6 +290,22 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
   def getBankAccounts (statement: Statement) = {
     
   }
+
+  override def matchTxns(state: Statement, txnID: Int, matchID: Int): Option[ResultSet] = {
+    val SQL =
+      s"""
+         |INSERT INTO Match (
+         |  Expense_ID,
+         |  Matched_ID
+         |) VALUES (?,?)
+         |""".stripMargin
+
+    val ps = conn.prepareStatement(SQL)
+    ps.setInt(1, matchID)
+    ps.setInt(2, txnID)
+
+    None
+  }
   
   override def getPossibleMatches (statement: Statement, amount: Double): Option[ResultSet] = {
     val SQL = s"select * from Txn where amount = $amount"

@@ -277,6 +277,12 @@ object Transaction {
     txns.filter(txn => txn.getDBID != txnID).toSet
 
   }
+
+  def matchTxns(txnID: Int, matchID: Int): Boolean = {
+    try { DB_Factory.withDB((db, state) => db.matchTxns(state, txnID, matchID)) }
+    catch { case e: Exception => return false }
+    true
+  }
   
   /**
    * Gets all accounts from the database. So far only gathers total of each account.
