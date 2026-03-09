@@ -12,7 +12,6 @@
         <h3>Change type?</h3>
 
         @helper.form(action = routes.AccountsController.changeType(), Symbol("method") -> "POST") {
-            @helper.CSRF.formField
             <input type="hidden" name="ID" value="@account.getID">
 
         <label for="types">Choose type:</label>
