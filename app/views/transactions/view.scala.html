@@ -104,17 +104,8 @@
                 let td5 = document.createElement("td");
                 let td6 = document.createElement("td");
                 let td7 = document.createElement("td");
-                let btn = document.createElement("button");
-                btn.type = "button";
 
-                let ah = document.createElement("a");
-                ah.href = "javascript:matchThis('@txn.getDBID&matchID=@txn.getDBID')";
-                @*ah.href = '/transactions/foundMatch?id=@txn.getDBID&matchID=@txn.getDBID';*@
-                ah.innerHTML = "Match"
-                btn.appendChild(ah)
 
-                let td8 = document.createElement("td");
-                td8.appendChild(btn)
 
                 let txn = arrTxns[i];
                 td1.innerHTML = txn.Date;
@@ -124,6 +115,18 @@
                 td5.innerHTML = txn.Description;
                 td6.innerHTML = txn.Amount;
                 td7.innerHTML = txn.DBID;
+
+                // create button element
+                let btn = document.createElement("button");
+                btn.type = "button";
+                let ah = document.createElement("a");
+                btn.appendChild(ah)
+                let link = '/transactions/foundMatch?id=@txn.getDBID&matchID=' + txn.DBID
+                ah.href = link
+                ah.innerHTML = "Match"
+
+                let td8 = document.createElement("td");
+                td8.appendChild(btn)
 
                 row.appendChild(td1);
                 row.appendChild(td2);
@@ -143,12 +146,22 @@
             let matched = fetch('/transactions/match?id=@txn.getDBID', {
                 method: 'POST'
             }).then(res => res.json())
-            .then(data => createTable(data));
-            console.log("successfully grabbed matched txns")
+              .then(data => createTable(data));
+            console.log("successfully grabbed matched txns");
         }
 
         function matchThis(x) {
-console.log("a");
+            let status = false
+            let result = fetch('/transactions/foundMatch' + x, {
+                method: 'GET'
+            }).then(res => res.json)
+              .then(stat => {
+                    if (stat.status == "good") {
+
+                    }
+              })
+            if (result === 'successful') { Location.reload() }
+
         }
     </script>
 

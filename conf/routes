@@ -20,9 +20,10 @@ GET     /transactions               controllers.TransactionsController.list()
 GET     /transactions/add           controllers.TransactionsController.add()
 GET     /transactions/view/:txnID   controllers.TransactionsController.view(txnID: Int)
 POST    /transactions/match         controllers.TransactionsController.getMatches(id: Int)
-GET    /transactions/foundMatch    controllers.TransactionsController.foundMatch(id: Int, matchID: Int)
+GET     /transactions/foundMatch    controllers.TransactionsController.foundMatch(id: Int, matchID: Int)
 
 #Files
++nocsrf
 GET     /file                       controllers.UploadController.goToUpload()
 POST    /file/uploadStatus/Ledger   controllers.UploadController.upload()
 POST    /file/uploadStatus/Invoice  controllers.UploadController.uploadInvoice()

@@ -24,6 +24,7 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
    */
   override def initDb (state: Statement): Option[ResultSet] = {
 
+    // create account table
     var SQL =
       s"""
          |CREATE TABLE IF NOT EXISTS Acc (
@@ -34,6 +35,7 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
          |""".stripMargin
     conn.prepareStatement(SQL).executeUpdate()
 
+    // create transaction table
     SQL =
       s"""
          |CREATE TABLE IF NOT EXISTS Txn (
@@ -51,11 +53,16 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
          |  )""".stripMargin
     conn.prepareStatement(SQL).executeUpdate()
 
+    /* create matched table
+     * this table is a synthetic comprised of the DBIDs of two transactions, indicating
+     * that one is directly correlated to another. One transaction may be matched to
+     * multiple, though each individual match is its own entry in the match table.
+     */
     SQL =
       s"""
          |CREATE TABLE IF NOT EXISTS Match (
-         |  Expense_ID integer REFERENCES Txn(Transaction_ID),
-         |  Matched_ID integer REFERENCES Txn(Transaction_ID)
+         |  Match_ID integer REFERENCES Txn(Transaction_ID),
+         |  Expense_ID integer REFERENCES Txn(Transaction_ID)
          |)""".stripMargin
     conn.prepareStatement(SQL).executeUpdate()
     None
@@ -101,7 +108,19 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
     None
   }
 
+  /**
+   * Adds all transactions from a list in a batch statement. Meant to be used when uploading
+   * many transactions at once, such as from an uploaded csv file.
+   *
+   * @param state : Statement, jdbc connection statement
+   * @param trades: List[Transaction], list of txns to upload
+   * @param accs  : Map[String, Int],  Accounts were uploaded before so their ID can be used as a foreign key
+   * @return      : Option[ResultSet], result of DB operation, is None since DB returns nothing, error is thrown if
+   *                                   unsuccessful
+   */
   def addTxnBatch (state: Statement, trades: List[Transaction], accs: Map[String, Int]): Option[ResultSet] = {
+    logger.info(s"processing ${trades.size} transactions into SQL and sending to DB")
+    val startTime = System.currentTimeMillis()
 
     if (trades.isEmpty) return None
 
@@ -141,6 +160,7 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
       }
       ps.executeBatch()
       conn.commit()
+      logger.info(s"Finished uploading, took ${System.currentTimeMillis()-startTime}ms")
       None
     } catch {
       case e: Exception =>
@@ -152,10 +172,23 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
       }
       conn.setAutoCommit(prevAutoCommit)
     }
+
   }
 
+  /**
+   * Gets all transactions, assumes all if no account specified, otherwise will grab
+   * only those associated with a specific account
+   *
+   * @param statement : Statement,  jdbc connection statement
+   * @param account   : String, account to grab txns from, will grab all if empty (default)
+   * @return          : Option[ResultSet], result of DB operation, will be None if operation was unsuccessful. Though
+   *                                       it doesn't matter since error will be thrown before the None is returned.
+   *                                       Maybe change that for error handling in the future.
+   */
   override def getTxns (statement: Statement, account: String = ""): Option[ResultSet] = {
     logger.info("getting transactions")
+    val startTime = System.currentTimeMillis()
+
     var SQL = ""
     if (account.isEmpty) {
       SQL =
@@ -172,21 +205,40 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
     }
 
     if (SQL.isEmpty){
+      logger.info(s"grabbing txns ended in failure, took ${System.currentTimeMillis()-startTime}ms")
       throw new Error("something went wrong with the getTxns function")
       None
     }
+    logger.info(s"grabbing txns ended in success, took ${System.currentTimeMillis()-startTime}ms")
     Option(statement.executeQuery(SQL))
   }
-  
+
+  /**
+   * Grabs a specifc transaction by ID from the DB
+   * @param statement: Statement, jdbc connection statement
+   * @param ID       : Int, internal DBID of transaction
+   * @return         : Option[ResultSet], result of DB operation
+   */
   override def getSpecificTxn (statement: Statement, ID: Int): Option[ResultSet] = {
+    logger.info(s"Getting txn $ID from DB")
+    val startTime = System.currentTimeMillis()
     val SQL =
       s"""
          |select * from Txn where Transaction_ID=$ID
          |""".stripMargin
-      
+
+    logger.info(s"Obtained txn $ID, took ${System.currentTimeMillis()-startTime}ms")
     Some(statement.executeQuery(SQL))
   }
 
+  /**
+   * So far just used to get a specific transaction by ID
+   * TODO: perhaps can use to grab a set of transactions so I don't need to
+   *       create a new connection instance every fucking time?
+   *
+   * @param ID : Int, internal DBID of transaction
+   * @return
+   */
   override def getTxnsByID (statement: Statement, ID: String): Option[ResultSet] = {
     var SQL =
       s"""
@@ -200,6 +252,12 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
     getTxns(statement, name)
   }
 
+  /**
+   * Useless for now, ignore
+   *
+   * @param statement
+   * @return
+   */
   override def getReport (statement: Statement): Option[ResultSet] = {
 
     val SQL =
@@ -281,7 +339,7 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
   override def getTxnsExpenseMatch (statement: Statement, id: Int): Option[ResultSet] = {
     val SQL =
       s"""
-         |select * from Match where Expense_ID = $id;
+         |select * from Match where Match_ID != $id;
          |""".stripMargin
          
     Some(statement.executeQuery(SQL))
@@ -292,17 +350,20 @@ class DB_PostgreS  (override val url: String) extends DB_Interface {
   }
 
   override def matchTxns(state: Statement, txnID: Int, matchID: Int): Option[ResultSet] = {
+
     val SQL =
       s"""
          |INSERT INTO Match (
-         |  Expense_ID,
-         |  Matched_ID
+         |  Match_ID,
+         |  Expense_ID
          |) VALUES (?,?)
          |""".stripMargin
 
     val ps = conn.prepareStatement(SQL)
-    ps.setInt(1, matchID)
-    ps.setInt(2, txnID)
+    ps.setInt(2, matchID)
+    ps.setInt(1, txnID)
+    println(ps.toString)
+    ps.executeUpdate()
 
     None
   }

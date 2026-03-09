@@ -218,9 +218,23 @@ object Transaction {
   
   def getTxnAndMatched (id: Int): (Transaction, mutable.HashSet[Transaction]) = {
 
+    // grab original transaction, and grab potential matches
     val resMain = DB_Factory.withDB((db, state) => db.getSpecificTxn(state, id))
-    val resMatched = DB_Factory.withDB((db, state) => db.getTxnsExpenseMatch(state, id))
+    val resMatch = DB_Factory.withDB((db, state) => db.getTxnsExpenseMatch(state, id)).get
 
+    // grab data from potential matches
+    val matchedID  = new mutable.HashSet[Int]()
+    while (resMatch.next()) { matchedID add resMatch.getInt("Expense_ID") }
+    val matchedRes = mutable.HashSet[ResultSet]()
+    // each int ID gets turned into a resultSet with 1 result, then mapped into a set of Transactions
+    val resMatched = matchedID.flatMap(id => {
+      DB_Factory.withDB((db, state) => db.getTxnsByID(state, id.toString))
+    }).map(resSet => {
+      resSet.next() // can't be a one liner because jdbc is dumb and doesn't let me do _.next in an arg
+      Transaction.TxnFromPostgres(resSet)
+    })
+
+    // parse main transsaction from sql 
     resMain.get.next()
     val txn = new Transaction(
       resMain.get.getString("From_ACC"),              // from account
@@ -234,28 +248,7 @@ object Transaction {
       resMain.get.getDouble("Tax"),                   // tax (if applicable)
       resMain.get.getInt("Transaction_ID")            // database ID
     )
-
-    val matched = new mutable.HashSet[Transaction]()
-
-    if (resMatched.isDefined) {
-      while (resMatched.get.next()) {
-        matched.add(
-          new Transaction(
-            resMatched.get.getString("From_ACC"), // from account
-            resMatched.get.getString("To_ACC"), // to account
-            Date.fromString(resMatched.get.getString("Date")), // date
-            resMatched.get.getString("Type"), // type
-            resMatched.get.getString("ID"), // invoice/check ID (if applicable)
-            resMatched.get.getString("Name"), // name (if applicable)
-            resMatched.get.getString("Description"), // description (if applicable)
-            resMatched.get.getDouble("Amount"), // amount
-            resMatched.get.getDouble("Tax"), // tax (if applicable)
-            resMatched.get.getInt("Transaction_ID") // database ID
-          )
-        )
-      }
-    }
-    (txn, matched)
+    (txn, resMatched)
   }
 
   /**

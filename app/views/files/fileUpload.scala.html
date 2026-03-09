@@ -9,14 +9,12 @@
     <h2>General Ledger</h2>
     @helper.form(action = routes.UploadController.upload(), Symbol("enctype") -> "multipart/form-data") {
         <input type="file" multiple name="name" size="30">
-        @helper.CSRF.formField
         <input type="submit" id="upload" value="upload file">
     }
 
     <h2>Invoices</h2>
     @helper.form(action = routes.UploadController.uploadInvoice(), Symbol("enctype") -> "multipart/form-data") {
         <input type="file" multiple name="name" size="30">
-        @helper.CSRF.formField
         <input type="submit" id="upload" value="upload file">
     }
 

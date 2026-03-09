@@ -32,9 +32,9 @@ trait DB_Interface {
   def dropDB(state: Statement): Option[ResultSet] = {
     logger.info("in dropdb")
     try {
-      conn.prepareStatement("drop table if exists Txn").executeUpdate()
+      conn.prepareStatement("drop table if exists Txn Cascade").executeUpdate()
       logger.info("deleted txn")
-      conn.prepareStatement("drop table if exists Acc").executeUpdate()
+      conn.prepareStatement("drop table if exists Acc Cascade").executeUpdate()
       logger.info("deleted acc")
     } catch {
       case e:Exception => println(e)
@@ -86,7 +86,7 @@ trait DB_Interface {
   def getSpecificTxn (state: Statement, ID: Int): Option[ResultSet]
   
   def getPossibleMatches (state: Statement, amount: Double): Option[ResultSet]
-  
+
   def matchTxns (state: Statement, txnID: Int, matchID: Int): Option[ResultSet]
 
   def addAccounts   (state: Statement, account: Set[String]): Option[ResultSet]
