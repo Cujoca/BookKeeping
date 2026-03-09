@@ -32,10 +32,12 @@ trait DB_Interface {
   def dropDB(state: Statement): Option[ResultSet] = {
     logger.info("in dropdb")
     try {
-      conn.prepareStatement("drop table if exists Txn Cascade").executeUpdate()
-      logger.info("deleted txn")
-      conn.prepareStatement("drop table if exists Acc Cascade").executeUpdate()
-      logger.info("deleted acc")
+      conn.prepareStatement("delete from Match").executeUpdate()
+      logger.info("cleared Match")
+      conn.prepareStatement("delete from Txn").executeUpdate()
+      logger.info("cleared txn")
+      conn.prepareStatement("delete from Acc").executeUpdate()
+      logger.info("cleared acc")
     } catch {
       case e:Exception => println(e)
     }

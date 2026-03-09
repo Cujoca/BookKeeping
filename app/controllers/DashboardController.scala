@@ -10,7 +10,8 @@ class DashboardController @Inject() (val controllerComponents: ControllerCompone
     extends BaseController {
 
   def dashboard() = Action { implicit request: Request[AnyContent] =>
-    val report = Transaction.getReportFromDB()
-    Ok(views.html.dashboard(report.toMap))
+    //val report = Transaction.getReportFromDB
+    //Ok(views.html.dashboard(report.toMap))
+    Ok(views.html.dashboard(Map.empty[String, Double]))
   }
 }

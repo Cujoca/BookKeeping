@@ -281,7 +281,7 @@ object Transaction {
    * Gets all accounts from the database. So far only gathers total of each account.
    * @return : HashMap[String, Double], map of accounts to total balance
    */
-  def getReportFromDB (): mutable.HashMap[String, Double] = {
+  def getReportFromDB: mutable.HashMap[String, Double] = {
     val result = DB_Factory.withDB { (db, state) => db.getReport(state) }
     if (result.isEmpty) {throw new Error("something went wrong with the getReportFromDB function")}
     val out = new mutable.HashMap[String, Double]()
